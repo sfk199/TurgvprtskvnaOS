@@ -164,6 +164,7 @@ build/obj/%.asm.o: %.asm GNUmakefile
 .PHONY: run
 run:
 	qemu-system-x86_64 \
+		-serial stdio \
 		-cdrom build/$(OUTPUT).iso
 
 # Remove object files and the final executable.

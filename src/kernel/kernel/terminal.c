@@ -14,6 +14,10 @@ static uint32_t cursor_y = 0, cursor_x = 0; // Only checked for validity when dr
 #define GLYPH_STRIDE_Y  GLYPH_HEIGHT + 2
 
 void terminal_putchar (char symbol) {
+    // Check if framebuffer is initialized
+    if (!framebuffer_initialized())
+        return;
+
     if (cursor_x > framebuffer_width() || symbol == '\n')
         cursor_x = 0, cursor_y += GLYPH_STRIDE_Y;
     if (cursor_y > framebuffer_height())
@@ -37,10 +41,7 @@ void terminal_writestring (const char* str) {
     for (size_t i = 0; str[i]; i++) terminal_putchar (str[i]);
 }
 
-void terminal_write (const char* data, size_t size) {
-    for (size_t i = 0; i < size; i++) terminal_putchar (data[i]);
-}
-
+bool terminal_initialized () { return framebuffer_initialized(); }
 void terminal_initialize () {
-    terminal_writestring ("[  INFO  ] Terminal init!\n");
+    terminal_writestring ("[  INFO  ] Terminal ready!\n");
 }

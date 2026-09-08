@@ -11,6 +11,10 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
 
 static struct limine_framebuffer *framebuffer = NULL;
 
+bool framebuffer_initialized () {
+    return framebuffer != NULL;
+}
+
 void framebuffer_set_pixel (uint64_t y, uint64_t x, bool c) {
     uint32_t *address = framebuffer->address;
     address[y * (framebuffer->pitch / 4) + x] = 0xFFFFFF * c;
