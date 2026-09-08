@@ -1,0 +1,2 @@
+-Isrc/kernel/include
+-Isrc/libc/include
