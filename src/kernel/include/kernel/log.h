@@ -2,5 +2,6 @@
 #define KERNEL_LOG
 
 void kernel_writestring (const char* data);
+void kernel_printf (const char* format, ...);
 
 #endif

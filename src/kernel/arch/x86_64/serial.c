@@ -6,7 +6,7 @@
 #define PORT 0x3f8 // COM1
 
 static int serial_is_transmit_empty() { return inb (PORT + 5) & 0x20; }
-void serial_putchar (char c) {
+void serial_putchar (const char c) {
     while (!serial_is_transmit_empty());
     outb (PORT, c);
 }
@@ -31,7 +31,7 @@ void serial_initialize () {
 
     // Check if serial is faulty (i.e: not same byte as sent)
     if (inb (PORT + 0) != 0xAE) {
-        kernel_writestring ("[  WARN  ] Serial is faulty, is it connected?");
+        kernel_writestring ("[  WARN  ] Serial is faulty, is it connected?\n");
         return;
     }
 
@@ -39,5 +39,5 @@ void serial_initialize () {
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
     outb (PORT + 4, 0b00001111);
     initialized = 1;
-    kernel_writestring ("[  INFO  ] Serial initialized!");
+    kernel_writestring ("[  INFO  ] Serial initialized!\n");
 }

@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kernel/framebuffer.h>
-#include <hcf.h>
+#include <kernel/hcf.h>
 #include <kernel/font.h>
 
 static const uint64_t font_table[] = GLYPH_FONT;

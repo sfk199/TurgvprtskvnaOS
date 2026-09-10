@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <kernel/limine/limine_defs.h>
-#include <hcf.h>
+#include <kernel/hcf.h>
 
 __attribute__((used, section(".limine_requests")))
 static volatile struct limine_framebuffer_request framebuffer_request = {

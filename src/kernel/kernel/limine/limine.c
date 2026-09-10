@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include <hcf.h>
+#include <kernel/hcf.h>
 #include <kernel/limine/limine_defs.h>
 
 // https://github.com/Limine-Bootloader/limine-protocol/blob/trunk/PROTOCOL.md

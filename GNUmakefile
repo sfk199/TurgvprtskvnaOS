@@ -118,7 +118,6 @@ build/$(OUTPUT).iso: build/limine-binary build/$(OUTPUT)
 	mkdir -p build/iso-root
 	mkdir -p build/iso-root/EFI/BOOT
 	cp -v build/limine-binary/limine-binary/BOOTX64.EFI build/iso-root/EFI/BOOT
-	cp -v build/limine-binary/limine-binary/BOOTIA32.EFI build/iso-root/EFI/BOOT
 	mkdir -p build/iso-root/boot
 	cp -v build/$(OUTPUT) build/iso-root/boot
 	mkdir -p build/iso-root/boot/limine
