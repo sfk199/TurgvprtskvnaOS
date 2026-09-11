@@ -1,9 +1,9 @@
+#include <kernel/devices/display/framebuffer.h>
+#include <kernel/devices/display/font.h>
+#include <kernel/hcf.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <kernel/framebuffer.h>
-#include <kernel/hcf.h>
-#include <kernel/font.h>
 
 static const uint64_t font_table[] = GLYPH_FONT;
 static uint32_t cursor_y = 0, cursor_x = 0; // Only checked for validity when drawing

@@ -1,5 +1,5 @@
-#include <kernel/terminal.h>
-#include <kernel/serial.h>
+#include <kernel/devices/display/terminal.h>
+#include <kernel/devices/serial.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>

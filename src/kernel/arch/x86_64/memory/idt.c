@@ -6,7 +6,8 @@
 // Also read:
 // gdt.c
 // https://wiki.osdev.org/Interrupt_Descriptor_Table
-// https://wiki.osdev.org/Interrupts_Tutorial
+// https://wiki.osdev.org/Inter
+// ><rupts_Tutorial
 // https://github.com/dreamportdev/Osdev-Notes/blob/master/02_Architecture/05_InterruptHandling.md
 
 /*
@@ -74,6 +75,12 @@ typedef struct {
 } __attribute__ ((packed)) idt_entry_t;
 
 typedef struct {
+    uint64_t rax;  uint64_t rbx;  uint64_t rcx;  uint64_t rdx;
+    uint64_t rsi;  uint64_t rdi;  uint64_t rsp_; uint64_t rbp;
+    uint64_t r8;   uint64_t r9;   uint64_t r10;  uint64_t r11;
+    uint64_t r12;  uint64_t r13;  uint64_t r14;  uint64_t r15;
+
+
     uint64_t vector_number;
     uint64_t error_code;
 
@@ -82,11 +89,6 @@ typedef struct {
     uint64_t flags;
     uint64_t rsp;
     uint64_t ss;
-
-    uint64_t rax;  uint64_t rbx;  uint64_t rcx;  uint64_t rdx;
-    uint64_t rsi;  uint64_t rdi;  uint64_t rsp_; uint64_t rbp;
-    uint64_t r8;   uint64_t r9;   uint64_t r10;  uint64_t r11;
-    uint64_t r12;  uint64_t r13;  uint64_t r14;  uint64_t r15;
 } idt_interrupt_cpu_status_t;
 
 void idt_interrupt_dispatch (idt_interrupt_cpu_status_t* context) {
@@ -126,7 +128,7 @@ void idt_interrupt_dispatch (idt_interrupt_cpu_status_t* context) {
         case 30: kernel_writestring ("[  WARN  ] Interrupt: Security Exception\n");               break;
         /*    31 Reserved for future use */
         case 31: kernel_writestring ("[  ERROR ] Interrupt: Reserved (31)\n");                    break;
-        default: kernel_printf    ("[  DEBG  ] Interrupt: %u\n", context->error_code);          break;
+        default: kernel_printf    ("[  DEBG  ] Interrupt: %u\n", context->vector_number);       break;
     }
 
     // Print some diagnostics info
@@ -174,8 +176,4 @@ void idt_initialize () {
     idt_flush_idtr (&idt_idtr);
 
     kernel_writestring ("[  INFO  ] IDT Initialized!\n");
-
-    volatile int a = 0 / 0;
-
-    kernel_writestring ("[  DEBG  ] Continued!\n");
 }

@@ -1,5 +1,5 @@
+#include <kernel/devices/io.h>
 #include <kernel/log.h>
-#include <kernel/io.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -39,5 +39,9 @@ void serial_initialize () {
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
     outb (PORT + 4, 0b00001111);
     initialized = 1;
+    
+    // Clear serial output (e.g. from firmware logs)
+    // Technically, \x1b[H should have been enough, but it is not
+    serial_writestring ("\x1b[2J\x1b[H");
     kernel_writestring ("[  INFO  ] Serial initialized!\n");
 }

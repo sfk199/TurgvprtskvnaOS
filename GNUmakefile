@@ -163,6 +163,7 @@ build/obj/%.asm.o: %.asm GNUmakefile
 .PHONY: run
 run:
 	qemu-system-x86_64 \
+		-drive if=pflash,format=raw,readonly=on,file=assets/OVMF_CODE_x86-64.fd \
 		-serial stdio \
 		-cdrom build/$(OUTPUT).iso
 

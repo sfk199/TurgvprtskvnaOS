@@ -1,6 +1,7 @@
-#include <stdbool.h>
 #include <kernel/hcf.h>
 #include <kernel/limine/limine_defs.h>
+#include <stddef.h>
+#include <stdbool.h>
 
 // https://github.com/Limine-Bootloader/limine-protocol/blob/trunk/PROTOCOL.md
 __attribute__((used, section(".limine_requests_start")))
