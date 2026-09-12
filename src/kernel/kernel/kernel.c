@@ -15,13 +15,15 @@ void kernel_main () {
     limine_initialize ();
     framebuffer_initialize ();
     terminal_initialize ();
-    pic_initialize ();
-    serial_initialize ();
 
     hhdm_initialize ();
     gdt_initialize ();
     idt_initialize ();
-    acpi_initialize();
+    // acpi_initialize();
+
+    serial_initialize ();
+    pic_initialize ();
+
 
     hcf ();
 }
