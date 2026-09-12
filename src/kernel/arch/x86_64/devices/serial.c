@@ -37,7 +37,7 @@ void serial_initialize () {
 
     // If serial is not faulty set it in normal operation mode
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-    outb (PORT + 4, 0b00001111);
+    outb (PORT + 4, 0b00001011);
     initialized = 1;
     
     // Clear serial output (e.g. from firmware logs)

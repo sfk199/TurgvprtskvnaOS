@@ -3,6 +3,7 @@
 #include <kernel/devices/display/terminal.h>
 #include <kernel/devices/serial.h>
 
+#include <kernel/devices/pic.h>
 #include <kernel/memory/hhdm.h>
 #include <kernel/memory/descriptor_tables.h>
 #include <kernel/acpi.h>
@@ -14,6 +15,7 @@ void kernel_main () {
     limine_initialize ();
     framebuffer_initialize ();
     terminal_initialize ();
+    pic_initialize ();
     serial_initialize ();
 
     hhdm_initialize ();
