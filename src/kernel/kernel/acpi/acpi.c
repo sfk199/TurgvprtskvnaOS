@@ -27,7 +27,7 @@ typedef struct {
     uint64_t xsdt_address;
     uint8_t extended_checksum;
     uint8_t reserved[3];
-} __attribute__ ((packed)) xsdt_t;
+} __attribute__ ((packed)) xsdp_t;
 
 #define ACPI_RSDP_XSDP_NOT_FOUND \
     do { kernel_printf ("[  ERROR ][  ACPI  ] RSDP/XSDP Not found, this is bad...\n"); hcf (); } while (false)
@@ -37,12 +37,12 @@ static void acpi_decode_xsdt (uint64_t xsdt_address); // Its implemented below
 void acpi_initialize () {
     if (rsdp_request.response == NULL) ACPI_RSDP_XSDP_NOT_FOUND;
 
-    xsdt_t* xsdp_table = rsdp_request.response->address;
+    xsdp_t* xsdp = rsdp_request.response->address;
 
     // Signature check
-    if (memcmp (xsdp_table->signature, "RSD PTR ", 8)) { // Its (char)32 terminated, not (char)0...
+    if (memcmp (xsdp->signature, "RSD PTR ", 8)) {
         kernel_printf ("[  ERROR ][  ACPI  ] RSDP/XSDP Signature doesn't match, expected: \"RSD PTR \", got: \"");
-        for (size_t i = 0; i < 8; i++) kernel_putchar (xsdp_table->signature[i]);
+        for (size_t i = 0; i < 8; i++) kernel_putchar (xsdp->signature[i]);
         kernel_printf ("\"\n");
         ACPI_RSDP_XSDP_NOT_FOUND;
     }
@@ -50,14 +50,14 @@ void acpi_initialize () {
     // Checksum check
     uint8_t checksum = 0;
     for (size_t i = 0; i < 20; i++)
-        checksum += ((uint8_t*)xsdp_table)[i];
+        checksum += ((uint8_t*)xsdp)[i];
     if (checksum != 0) {
         kernel_printf ("[  ERROR ][  ACPI  ] RSDP/XSDP Checksum failed, sum is: %u\n", checksum);
         ACPI_RSDP_XSDP_NOT_FOUND;
     }
 
     // Check revision
-    uint8_t revision = xsdp_table->revision;
+    uint8_t revision = xsdp->revision;
     if (revision == 0) {
         kernel_printf ("[  WARN  ][  ACPI  ] RSDP/XSDP table revision is zero, using limine provided...\n");
         revision = rsdp_request.response->revision;
@@ -65,7 +65,7 @@ void acpi_initialize () {
 
     // Print some data...
     kernel_printf ("[  INFO  ][  ACPI  ] ACPI Revision %u, OEM=\"", revision);
-    for (size_t i = 0; i < 6; i++) kernel_putchar (xsdp_table->oemid[i]);
+    for (size_t i = 0; i < 6; i++) kernel_putchar (xsdp->oemid[i]);
     kernel_printf ("\"\n");
 
     if (revision == 0)
@@ -74,9 +74,9 @@ void acpi_initialize () {
         kernel_printf ("[  WARN  ][  ACPI  ] ACPI Revision is 1, your firmware is too old, trying to use XSDT anyways...\n");
 
     checksum = 0;
-    for (int i = 0; i < xsdp_table->length; i++)
-        checksum += ((uint8_t*)xsdp_table)[i];
-    if (checksum != 0 || xsdp_table->xsdt_address == 0) {
+    for (int i = 0; i < xsdp->length; i++)
+        checksum += ((uint8_t*)xsdp)[i];
+    if (checksum != 0 || xsdp->xsdt_address == 0) {
         if (checksum != 0)
             kernel_printf ("[  ERROR ][  ACPI  ] XSDP Checksum failed, sum is: %u\n", checksum);
         else
@@ -86,13 +86,15 @@ void acpi_initialize () {
         ACPI_RSDP_XSDP_NOT_FOUND;
     }
 
-    acpi_decode_xsdt (xsdp_table->xsdt_address + (int64_t)get_hhdm_offset());
-
+    acpi_decode_xsdt (xsdp->xsdt_address + get_hhdm_offset());
     kernel_printf ("[  INFO  ][  ACPI  ] ACPI Initialized!\n");
 }
 
 #undef ACPI_RSDP_XSDP_NOT_FOUND
 
+// =====================================
+// XSDT Parsing logic
+// =====================================s
 // We have pointer to XSDT structure, now lets actually decode stuff
 // Decoding logic is implemented below
 
@@ -108,20 +110,35 @@ typedef struct {
     uint32_t creator_revision;
 
     // And after this is uint64_t pointers to other SDTs. (.length - sizeof (acpi_sdt_header))
-} __attribute__ ((packed)) acpi_sdt_header;
+    uint64_t pointer_to_other_sdt[0];
+} __attribute__ ((packed)) acpi_sdt_header_t;
 
-static bool acpi_check_sdt_header_checksum (acpi_sdt_header* header) {
+static bool acpi_check_sdt_header_checksum (acpi_sdt_header_t* header) {
     uint8_t sum = 0;
     for (int i = 0; i < header->length; i++)
         sum += ((uint8_t*)header)[i];
     return sum == 0;
 }
 
+// These functions are implemented in same directory
+void acpi_decode_bgrt (uint64_t bgrt_address);
+
 static void acpi_decode_xsdt (uint64_t xsdt_address) {
-    acpi_sdt_header* xsdt = (acpi_sdt_header*)xsdt_address;
+    acpi_sdt_header_t* xsdt = (acpi_sdt_header_t*)xsdt_address;
 
     if (!acpi_check_sdt_header_checksum (xsdt)) {
         kernel_printf ("[  ERROR ][  ACPI  ] XSDT table checksum failed\n");
         hcf ();
+    }
+
+    for (size_t i = 0; i < (xsdt->length - sizeof (acpi_sdt_header_t)) / 8; i++) {
+        acpi_sdt_header_t* sdt = (acpi_sdt_header_t*)(xsdt->pointer_to_other_sdt[i] + get_hhdm_offset());
+
+        if (!memcmp (sdt->signature, "BGRT", 4)) {
+            if (acpi_check_sdt_header_checksum (sdt))
+                acpi_decode_bgrt ((uint64_t)sdt);
+            else
+                kernel_printf ("[  WARN  ][  ACPI  ] BGRT table is not valid\n");
+        }
     }
 }

@@ -6,8 +6,7 @@
 // Also read:
 // gdt.c
 // https://wiki.osdev.org/Interrupt_Descriptor_Table
-// https://wiki.osdev.org/Inter
-// ><rupts_Tutorial
+// https://wiki.osdev.org/Interrupts_Tutorial
 // https://github.com/dreamportdev/Osdev-Notes/blob/master/02_Architecture/05_InterruptHandling.md
 
 /*

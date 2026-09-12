@@ -20,6 +20,11 @@ void framebuffer_set_pixel (uint64_t y, uint64_t x, bool c) {
     address[y * (framebuffer->pitch / 4) + x] = 0xFFFFFF * c;
 }
 
+void framebuffer_set_pixel_rgb (uint64_t y, uint64_t x, uint32_t rgb) {
+    uint32_t *address = framebuffer->address;
+    address[y * (framebuffer->pitch / 4) + x] = rgb;
+}
+
 uint64_t framebuffer_height () { return framebuffer->height; }
 uint64_t framebuffer_width () { return framebuffer->width; }
 
