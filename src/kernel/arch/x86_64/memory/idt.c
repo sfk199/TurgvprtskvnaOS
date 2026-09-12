@@ -169,9 +169,9 @@ extern char vector_0_handler[];
 
 void idt_initialize () {
     for (size_t i = 0; i < 256; i++)
-        idt_populate_entry (&idt_entries[i], vector_0_handler + (i * 16), 0x8E);
+        idt_populate_entry (&idt_entries[i], vector_0_handler + (i * 32), 0x8E);
     idt_idtr.offset = (uint64_t)idt_entries;
-    idt_idtr.size = sizeof (idt_entries);
+    idt_idtr.size = sizeof (idt_entries) - 1;
     idt_flush_idtr (&idt_idtr);
 
     kernel_writestring ("[  INFO  ] IDT Initialized!\n");

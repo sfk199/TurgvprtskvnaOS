@@ -19,7 +19,7 @@ void kernel_main () {
     hhdm_initialize ();
     gdt_initialize ();
     idt_initialize ();
-    // acpi_initialize();
+    acpi_initialize();
 
     serial_initialize ();
     pic_initialize ();

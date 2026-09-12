@@ -78,6 +78,7 @@ void pic_initialize () {
     for (int i = 0; i <= 1; i++)
         irq_clear_mask (i);
 
+    // really bad pic initialization code, ill rewrite it later
     outb (0x43, 0x36);          // ch0, lo/hi, mode 3
     outb (0x40, 0xFF);          // divisor lo
     outb (0x40, 0xFF);          // divisor hi -> ~18.2 Hz
@@ -86,6 +87,7 @@ void pic_initialize () {
     
     // volatile int a = 0 / 0;
 
+    asm ("sti");
     
     kernel_printf ("[  INFO  ] PICs remapped and disabled!\n");
 }

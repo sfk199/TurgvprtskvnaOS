@@ -25,7 +25,9 @@ idt_interrupt_stub:
    push rax
 
    mov rdi, rsp
+   sub rsp, 8 ; SysV ABI needs 16-aligned stack :pensive:
    call idt_interrupt_dispatch
+   add rsp, 8
    mov rsp, rax
 
    pop rax
@@ -52,11 +54,11 @@ idt_interrupt_stub:
 %assign i 0 
 %rep 256
 
-align 16
+align 32
 global vector_%+i%+_handler
 vector_%+i%+_handler:
    ; some vectors dont have error code
-%if (i <= 7) || (i == 8) || (10 <= i && i <= 14) || (i == 17) || (i == 21) || (i == 29) || (i == 30) || (i >= 32)
+%if (i <= 7) || (i == 9) || (i == 16) || (18 <= i && i <= 20) || (i == 28) || (i >= 32)
    push 0
 %endif
    ; vector number
