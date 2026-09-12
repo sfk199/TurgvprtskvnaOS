@@ -43,5 +43,6 @@ void terminal_writestring (const char* str) {
 
 bool terminal_initialized () { return framebuffer_initialized(); }
 void terminal_initialize () {
+    terminal_writestring ("[  INFO  ] Welcome to TurgvprtskvnaOS!\n");
     terminal_writestring ("[  INFO  ] Terminal ready!\n");
 }

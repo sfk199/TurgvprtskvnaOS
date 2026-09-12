@@ -1,7 +1,7 @@
 # Nuke built-in rules
 .SUFFIXES:
 
-override OUTPUT := kernel
+override OUTPUT := turgvprtskvna
 
 # User controllable toolchain and toolchain prefix.
 TOOLCHAIN :=
