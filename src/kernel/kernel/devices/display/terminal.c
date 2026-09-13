@@ -18,9 +18,9 @@ void terminal_putchar (char symbol) {
     if (!framebuffer_initialized())
         return;
 
-    if (cursor_x > framebuffer_width() || symbol == '\n')
+    if (cursor_x + GLYPH_WIDTH > framebuffer_width() || symbol == '\n')
         cursor_x = 0, cursor_y += GLYPH_STRIDE_Y;
-    if (cursor_y > framebuffer_height())
+    if (cursor_y + GLYPH_HEIGHT > framebuffer_height())
         cursor_x = 0, cursor_y = 0;
 
     if (symbol < 32 || symbol > 127)

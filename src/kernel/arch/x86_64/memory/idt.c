@@ -151,6 +151,11 @@ void idt_interrupt_dispatch (idt_interrupt_cpu_status_t* context) {
         kernel_writestring ("[  INFO  ] Achievement Unlocked: How Did We Get Here?\n");
     if (context->vector_number == 8 || context->vector_number == 9 || context->vector_number == 18 || (22 <= context->vector_number && context->vector_number <= 27) || context->vector_number == 31)
         hcf();
+
+    if (context->vector_number <= 31) {
+        kernel_writestring ("[  TODO  ] Do not hcf() on faults and traps\n");
+        hcf();
+    }
 }
 
 void idt_flush_idtr (const idtr_t* gdtr);
