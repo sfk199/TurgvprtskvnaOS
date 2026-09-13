@@ -28,28 +28,14 @@ idt_interrupt_stub:
    sub rsp, 8 ; SysV ABI needs 16-aligned stack :pensive:
    call idt_interrupt_dispatch
    add rsp, 8
-   mov rsp, rax
+   ; rax is trash here, mov rsp rax is not needed
 
-   pop rax
-   pop rbx
-   pop rcx
-   pop rdx
-   pop rsi
-   pop rdi
-   pop rsp
-   pop rbp
-   pop r8
-   pop r9
-   pop r10
-   pop r11
-   pop r12
-   pop r13
-   pop r14
-   pop r15
+   ; Remove the pushed registers
+   add rsp, 16 * 8
+   ; Remove the vector and error code
+   add rsp, 2 * 8
 
-   add rsp, 16
-
-   iret
+   iretq
 
 %assign i 0 
 %rep 256

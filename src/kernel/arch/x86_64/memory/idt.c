@@ -1,5 +1,6 @@
 #include <kernel/log.h>
 #include <kernel/hcf.h>
+#include <kernel/devices/pic.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -127,7 +128,13 @@ void idt_interrupt_dispatch (idt_interrupt_cpu_status_t* context) {
         case 30: kernel_writestring ("[  WARN  ] Interrupt: Security Exception\n");               break;
         /*    31 Reserved for future use */
         case 31: kernel_writestring ("[  ERROR ] Interrupt: Reserved (31)\n");                    break;
-        default: kernel_printf    ("[  DEBG  ] Interrupt: %u\n", context->vector_number);       break;
+        default:
+            if (32 <= context->vector_number && context->vector_number <= 47)
+                // PIC IRQ interrupts
+                pic_handle_irq (context->vector_number - 32);
+            else
+                kernel_printf    ("[  DEBG  ] Interrupt: %u\n", context->vector_number);
+            break;
     }
 
     // Print some diagnostics info
@@ -144,9 +151,6 @@ void idt_interrupt_dispatch (idt_interrupt_cpu_status_t* context) {
         kernel_writestring ("[  INFO  ] Achievement Unlocked: How Did We Get Here?\n");
     if (context->vector_number == 8 || context->vector_number == 9 || context->vector_number == 18 || (22 <= context->vector_number && context->vector_number <= 27) || context->vector_number == 31)
         hcf();
-    
-    kernel_writestring ("[  TODO  ] Recover from traps/faults\n");   
-    hcf ();
 }
 
 void idt_flush_idtr (const idtr_t* gdtr);
